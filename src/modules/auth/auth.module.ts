@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
-import { UsersModule } from "../users/users.module";
+import { UsersModule } from '../users/users.module';
+import Configuration from '../../configurations/configuration';
 
 @Module({
   imports: [
@@ -10,7 +11,7 @@ import { UsersModule } from "../users/users.module";
       useFactory: () => {
         return {
           global: true,
-          secret: process.env.JWT_SECRET_KEY,
+          secret: Configuration().jwtSecretKey, // process.env.JWT_SECRET_KEY,
           signOptions: { expiresIn: '60s' },
         };
       },

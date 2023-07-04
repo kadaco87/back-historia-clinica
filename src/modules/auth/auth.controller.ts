@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dtos/login.dto';
-import { ApiTags } from "@nestjs/swagger";
-import { RegisterDto } from "./dtos/register.dto";
-import { ForgotPasswordDto } from "./dtos/forgotPassword.dto";
+import { ApiTags } from '@nestjs/swagger';
+import { RegisterDto } from './dtos/register.dto';
+import { ForgotPasswordDto } from './dtos/forgotPassword.dto';
 
 @Controller('auth')
 @ApiTags('Authentication')
@@ -21,9 +21,9 @@ export class AuthController {
   forgotPassword(@Body() body: ForgotPasswordDto) {
     return this.authService.forgotPassword(body);
   }
-  @Post('recovery-password')
-  recoveryPassword(@Body() body) {
-    return this.authService.recoveryPassword(body);
+  @Post('reset-password')
+  resetPassword(@Body() body: { token: string; password: string }) {
+    return this.authService.resetPassword(body);
   }
   @Post('change-password')
   changePassword(@Body() body) {
