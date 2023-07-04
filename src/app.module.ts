@@ -11,7 +11,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import Configuration from './configurations/configuration';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EventMailModule } from './modules/mails/event-email.module';
-import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { UtilsModule } from './modules/utils/utils.module';
 
 config();
