@@ -12,7 +12,7 @@ import Configuration from '../../configurations/configuration';
         return {
           global: true,
           secret: Configuration().jwtSecretKey, // process.env.JWT_SECRET_KEY,
-          signOptions: { expiresIn: '60s' },
+          signOptions: { expiresIn: '1h' },
         };
       },
     }),

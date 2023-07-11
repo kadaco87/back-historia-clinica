@@ -15,10 +15,14 @@ export class UtilsService {
         map((data: any[]) => {
           const infoCountries = [];
           data.forEach((country) => {
-            infoCountries.push({
-              countryName: country.name.official,
-              code: country.idd,
-            });
+            if (country.idd.suffixes) {
+              infoCountries.push({
+                countryName: country.name.official,
+                code: `${country.idd.root}${country.idd.suffixes[0]}`.split(
+                  ':',
+                )[0],
+              });
+            }
           });
           return infoCountries;
         }),

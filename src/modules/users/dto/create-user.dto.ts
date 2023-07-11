@@ -1,18 +1,27 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNumber, IsObject, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsObject,
+  IsString,
+} from 'class-validator';
 
 export class FullName {
   @ApiProperty()
   @IsString()
+  @IsNotEmpty()
   firstName: string;
   @ApiProperty()
   @IsString()
   secondName: string;
   @ApiProperty()
   @IsString()
+  @IsNotEmpty()
   firstLastName: string;
   @ApiProperty()
   @IsString()
+  @IsNotEmpty()
   secondLastName: string;
 }
 
@@ -22,21 +31,27 @@ export class ContactInfo {
   countryOfResidence: string;
   @ApiProperty()
   @IsString()
+  @IsNotEmpty()
   zipCode: string;
   @ApiProperty()
   @IsString()
+  @IsNotEmpty()
   phone: string;
   @ApiProperty()
   @IsString()
+  @IsNotEmpty()
   address: string;
   @ApiProperty()
   @IsString()
+  @IsNotEmpty()
   state: string;
   @ApiProperty()
   @IsString()
+  @IsNotEmpty()
   city: string;
   @ApiProperty()
   @IsEmail()
+  @IsNotEmpty()
   email: string;
 }
 

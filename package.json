@@ -10,7 +10,7 @@
     "build": "nest build && copyfiles -f ./environments/* ./dist/environments && copyfiles -f package.json ./dist/ && copyfiles -f ./src/modules/mails/templates/* ./dist/templates/ ",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "nest start   && copyfiles -f ./environments/* ./dist/environments && copyfiles -f package.json ./dist/ && copyfiles -f ./src/modules/mails/templates/* ./dist/templates/ --watch ",
+    "start:dev": "copyfiles -f ./environments/* ./dist/environments && copyfiles -f package.json ./dist/ && copyfiles -f ./src/modules/mails/templates/* ./dist/templates/nest && nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
