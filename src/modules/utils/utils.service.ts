@@ -4,8 +4,46 @@ import { map } from 'rxjs';
 
 @Injectable()
 export class UtilsService {
-  countriesList = [];
-  constructor(private readonly httpService: HttpService) {}
+  private readonly genderList: any[] = [];
+  private readonly documentTypes: any[] = [];
+  private readonly roles: any[] = [];
+
+  constructor(private readonly httpService: HttpService) {
+    // Generos
+    this.genderList = [
+      { text: 'Masculino', id: 'asd-123-asd' },
+      { text: 'Femenino', id: 'asd-124-asd' },
+      { text: 'Indeterminado', id: 'asd-125-asd' },
+    ];
+
+    // Tipos de documentos
+    this.documentTypes = [
+      { id: 'asd-133-asd', text: 'Cedula de ciudadania' },
+      { id: 'asd-133-asd', text: 'Cedula de Extranjeria' },
+      { id: 'asd-133-asd', text: 'Pasaporte' },
+      { id: 'asd-133-asd', text: 'Tarjeta de Identidad' },
+    ];
+
+    // Roles
+    this.roles = [
+      {
+        id: 'asd-143-asd',
+        role: 'medico',
+      },
+      {
+        id: 'asd-143-asd',
+        role: 'auxiliar enfermeria',
+      },
+      {
+        id: 'asd-143-asd',
+        role: 'jefe enfermeria',
+      },
+      {
+        id: 'asd-143-asd',
+        role: 'admin',
+      },
+    ];
+  }
 
   getCountries() {
     return this.httpService
@@ -27,5 +65,17 @@ export class UtilsService {
           return infoCountries;
         }),
       );
+  }
+
+  getGenderList() {
+    return this.genderList;
+  }
+
+  getDocumentTypes() {
+    return this.documentTypes;
+  }
+
+  getRoles() {
+    return this.roles;
   }
 }

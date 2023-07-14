@@ -8,7 +8,21 @@ export class UtilsController {
   constructor(private readonly utilsService: UtilsService) {}
 
   @Get('countries')
-  coutries() {
+  getCountries() {
     return this.utilsService.getCountries();
+  }
+
+  @Get('genders')
+  getGenderList() {
+    return this.utilsService.getGenderList();
+  }
+
+  @Get('document-types')
+  getDocumentTypes() {
+    return this.utilsService.getDocumentTypes();
+  }
+  @Get('roles')
+  getRoles() {
+    return this.utilsService.getRoles();
   }
 }

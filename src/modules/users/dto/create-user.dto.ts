@@ -34,9 +34,9 @@ export class ContactInfo {
   @IsNotEmpty()
   zipCode: string;
   @ApiProperty()
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  phone: string;
+  phone: number;
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
@@ -60,14 +60,14 @@ export class CreateUserDto {
   @IsObject()
   fullName: FullName;
   @ApiProperty()
-  @IsNumber()
-  documentType: number;
+  @IsString()
+  documentType: string;
   @ApiProperty()
   @IsString()
   identification: string;
   @ApiProperty()
-  @IsString()
-  birthday: string;
+  @IsNumber()
+  birthday: number;
   @ApiProperty()
   @IsString()
   gender: string;
