@@ -27,19 +27,19 @@ export class UtilsService {
     // Roles
     this.roles = [
       {
-        id: 'asd-143-asd',
+        id: 'asd-101-asd',
         role: 'medico',
       },
       {
-        id: 'asd-143-asd',
+        id: 'asd-102-asd',
         role: 'auxiliar enfermeria',
       },
       {
-        id: 'asd-143-asd',
+        id: 'asd-103-asd',
         role: 'jefe enfermeria',
       },
       {
-        id: 'asd-143-asd',
+        id: 'asd-104-asd',
         role: 'admin',
       },
     ];

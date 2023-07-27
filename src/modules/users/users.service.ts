@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -37,6 +37,10 @@ export class UsersService {
 
   async findOne(id: string) {
     return await this.userModel.findOne({ id }).exec();
+  }
+
+  async findOneByIdentification(identification: string) {
+    return await this.userModel.findOne({ identification }).exec();
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {

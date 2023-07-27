@@ -1,18 +1,26 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dtos/login.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { RegisterDto } from './dtos/register.dto';
 import { ForgotPasswordDto } from './dtos/forgotPassword.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 @ApiTags('Authentication')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private authService: AuthService) {}
   @Post('login')
-  login(@Body() body: LoginDto) {
+  async login(@Body() body: LoginDto) {
     return this.authService.login(body);
   }
+
+  @Get('refresh-token')
+  @UseGuards(AuthGuard('jwt-refresh-token'))
+  async refreshToken(@Req() req: Request) {
+    return this.authService.refreshToken(req);
+  }
+
   @Post('register')
   register(@Body() body: RegisterDto) {
     return this.authService.register(body);
@@ -30,9 +38,9 @@ export class AuthController {
     return this.authService.changePassword(body);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('profile')
-  getProfile(@Query('id') id: number, @Query('password') password) {
-    console.log({ password });
-    return this.authService.getProfile(+id);
+  getProfile(@Req() req: Request) {
+    return this.authService.getProfile(req);
   }
 }
