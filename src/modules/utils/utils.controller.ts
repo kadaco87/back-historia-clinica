@@ -1,6 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UtilsService } from './utils.service';
+import { CreateRoleDto } from './dtos/create-role.dto';
 
 @Controller('utils')
 @ApiTags('Utils')
@@ -24,5 +25,9 @@ export class UtilsController {
   @Get('roles')
   getRoles() {
     return this.utilsService.getRoles();
+  }
+  @Post('roles')
+  createRole(@Body() body: CreateRoleDto) {
+    return this.utilsService.createRole(body);
   }
 }

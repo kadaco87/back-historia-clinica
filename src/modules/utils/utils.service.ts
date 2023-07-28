@@ -1,6 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { map } from 'rxjs';
+import { CreateRoleDto } from './dtos/create-role.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Role } from './schemas/utils.schema';
+import { Model } from 'mongoose';
+import { HttpStatusCode } from 'axios';
+
+interface ModelExt<T> extends Model<T> {
+  delete: (id) => any;
+  findDeleted: () => any;
+  restore: (id) => any;
+}
 
 @Injectable()
 export class UtilsService {
@@ -8,7 +19,10 @@ export class UtilsService {
   private readonly documentTypes: any[] = [];
   private readonly roles: any[] = [];
 
-  constructor(private readonly httpService: HttpService) {
+  constructor(
+    private readonly httpService: HttpService,
+    @InjectModel(Role.name) private roleModel: ModelExt<Role>,
+  ) {
     // Generos
     this.genderList = [
       { text: 'Masculino', id: 'asd-123-asd' },
@@ -75,7 +89,17 @@ export class UtilsService {
     return this.documentTypes;
   }
 
-  getRoles() {
-    return this.roles;
+  async getRoles() {
+    return await this.roleModel.find().exec();
+  }
+
+  async createRole(body: CreateRoleDto) {
+    try {
+      const role = new this.roleModel(body);
+      return await role.save();
+    } catch (e) {
+      console.error('Este es el error al crear el role => ', e);
+      throw new HttpException(e.message, HttpStatusCode.Conflict);
+    }
   }
 }

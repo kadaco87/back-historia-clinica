@@ -32,7 +32,26 @@ export class UsersService {
   }
 
   async findAll() {
-    return await this.userModel.find().exec();
+    return await this.userModel
+      .aggregate([
+        {
+          $lookup: {
+            from: 'roles',
+            as: 'roleInfo',
+            localField: 'role',
+            foreignField: 'id',
+          },
+        },
+        {
+          $unwind: '$roleInfo',
+        },
+        {
+          $addFields: {
+            roleName: '$roleInfo.role',
+          },
+        },
+      ])
+      .exec();
   }
 
   async findOne(id: string) {

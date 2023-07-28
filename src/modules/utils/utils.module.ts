@@ -2,9 +2,14 @@ import { Module } from '@nestjs/common';
 import { UtilsService } from './utils.service';
 import { UtilsController } from './utils.controller';
 import { HttpModule } from '@nestjs/axios';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Role, RoleSchema } from './schemas/utils.schema';
 
 @Module({
-  imports: [HttpModule],
+  imports: [
+    HttpModule,
+    MongooseModule.forFeature([{ name: Role.name, schema: RoleSchema }]),
+  ],
   providers: [UtilsService],
   controllers: [UtilsController],
 })
