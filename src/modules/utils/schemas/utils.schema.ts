@@ -13,3 +13,15 @@ export class Role extends Model {
 }
 
 export const RoleSchema = SchemaFactory.createForClass(Role);
+
+export type GenderDocument = Gender & Document;
+@Schema()
+export class Gender extends Model {
+  @Prop({ unique: true, default: uuidV4 })
+  id: string;
+
+  @Prop({ type: String })
+  gender: string;
+}
+
+export const GenderSchema = SchemaFactory.createForClass(Gender);

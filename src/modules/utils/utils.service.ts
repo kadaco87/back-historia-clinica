@@ -3,9 +3,10 @@ import { HttpService } from '@nestjs/axios';
 import { map } from 'rxjs';
 import { CreateRoleDto } from './dtos/create-role.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Role } from './schemas/utils.schema';
+import { Gender, Role } from './schemas/utils.schema';
 import { Model } from 'mongoose';
 import { HttpStatusCode } from 'axios';
+import { CreateGenderDto } from './dtos/create-gender.dto';
 
 interface ModelExt<T> extends Model<T> {
   delete: (id) => any;
@@ -15,47 +16,19 @@ interface ModelExt<T> extends Model<T> {
 
 @Injectable()
 export class UtilsService {
-  private readonly genderList: any[] = [];
   private readonly documentTypes: any[] = [];
-  private readonly roles: any[] = [];
 
   constructor(
     private readonly httpService: HttpService,
     @InjectModel(Role.name) private roleModel: ModelExt<Role>,
+    @InjectModel(Gender.name) private genderModel: ModelExt<Gender>,
   ) {
-    // Generos
-    this.genderList = [
-      { text: 'Masculino', id: 'asd-123-asd' },
-      { text: 'Femenino', id: 'asd-124-asd' },
-      { text: 'Indeterminado', id: 'asd-125-asd' },
-    ];
-
     // Tipos de documentos
     this.documentTypes = [
       { id: 'asd-133-asd', text: 'Cedula de ciudadania' },
       { id: 'asd-133-asd', text: 'Cedula de Extranjeria' },
       { id: 'asd-133-asd', text: 'Pasaporte' },
       { id: 'asd-133-asd', text: 'Tarjeta de Identidad' },
-    ];
-
-    // Roles
-    this.roles = [
-      {
-        id: 'asd-101-asd',
-        role: 'medico',
-      },
-      {
-        id: 'asd-102-asd',
-        role: 'auxiliar enfermeria',
-      },
-      {
-        id: 'asd-103-asd',
-        role: 'jefe enfermeria',
-      },
-      {
-        id: 'asd-104-asd',
-        role: 'admin',
-      },
     ];
   }
 
@@ -82,7 +55,7 @@ export class UtilsService {
   }
 
   getGenderList() {
-    return this.genderList;
+    return this.genderModel.find().exec();
   }
 
   getDocumentTypes() {
@@ -97,6 +70,16 @@ export class UtilsService {
     try {
       const role = new this.roleModel(body);
       return await role.save();
+    } catch (e) {
+      console.error('Este es el error al crear el role => ', e);
+      throw new HttpException(e.message, HttpStatusCode.Conflict);
+    }
+  }
+
+  async createGender(body: CreateGenderDto) {
+    try {
+      const gender = new this.genderModel(body);
+      return await gender.save();
     } catch (e) {
       console.error('Este es el error al crear el role => ', e);
       throw new HttpException(e.message, HttpStatusCode.Conflict);

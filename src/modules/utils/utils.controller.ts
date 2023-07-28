@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UtilsService } from './utils.service';
 import { CreateRoleDto } from './dtos/create-role.dto';
+import { CreateGenderDto } from './dtos/create-gender.dto';
 
 @Controller('utils')
 @ApiTags('Utils')
@@ -29,5 +30,10 @@ export class UtilsController {
   @Post('roles')
   createRole(@Body() body: CreateRoleDto) {
     return this.utilsService.createRole(body);
+  }
+
+  @Post('genders')
+  createGender(@Body() body: CreateGenderDto) {
+    return this.utilsService.createGender(body);
   }
 }
