@@ -51,7 +51,7 @@ export class User extends Model {
   @Prop({ type: String, default: hashSync('user1234', 10) })
   password: string;
 
-  @Prop({ default: '1', type: String })
+  @Prop({ required: true, type: String })
   role: string;
 
   @Prop({ required: true, type: String })

@@ -13,6 +13,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { EventMailModule } from './modules/mails/event-email.module';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { UtilsModule } from './modules/utils/utils.module';
+import { ClinicHistoryModule } from './modules/clinic-history/clinic-history.module';
 
 config();
 
@@ -66,6 +67,7 @@ config();
     EventEmitterModule.forRoot(),
     EventMailModule,
     UtilsModule,
+    ClinicHistoryModule,
   ],
   controllers: [],
   providers: [JwtService],

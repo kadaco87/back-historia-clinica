@@ -24,34 +24,41 @@ export class UsersService {
       const user = new this.userModel(createUserDto);
       if (await compare(user.toObject().password, 'user1234'))
         this.eventEmitter.emit('email.reset', createUserDto);
-      return await user.save();
+      return !!(await user.save());
     } catch (e) {
       console.error('Este es el error => ', e);
       throw new HttpException(e.message, HttpStatusCode.Conflict);
     }
   }
 
-  async findAll() {
-    return await this.userModel
-      .aggregate([
-        {
-          $lookup: {
-            from: 'roles',
-            as: 'roleInfo',
-            localField: 'role',
-            foreignField: 'id',
-          },
-        },
-        {
-          $unwind: '$roleInfo',
-        },
-        {
-          $addFields: {
-            roleName: '$roleInfo.role',
-          },
-        },
-      ])
-      .exec();
+  async findAll(role: string) {
+    if (!role) {
+      return await this.userModel
+        .find({ role: { $ne: '87f0a3bb-5f5c-48d0-a5f8-c7eca83098c3' } })
+        .select({
+          __v: false,
+          _id: false,
+          'contactInfo._id': false,
+          'contactInfo.deleted': false,
+          'fullName._id': false,
+          'fullName.deleted': false,
+        })
+        .exec();
+    } else if (role && role !== '') {
+      return await this.userModel
+        .find({ role })
+        .select({
+          __v: false,
+          _id: false,
+          'contactInfo._id': false,
+          'contactInfo.deleted': false,
+          'fullName._id': false,
+          'fullName.deleted': false,
+        })
+        .exec();
+    } else {
+      return [];
+    }
   }
 
   async findOne(id: string) {

@@ -3,10 +3,12 @@ import { HttpService } from '@nestjs/axios';
 import { map } from 'rxjs';
 import { CreateRoleDto } from './dtos/create-role.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Gender, Role } from './schemas/utils.schema';
+import { DocumentType, Gender, RH, Role } from './schemas/utils.schema';
 import { Model } from 'mongoose';
 import { HttpStatusCode } from 'axios';
 import { CreateGenderDto } from './dtos/create-gender.dto';
+import { CreateDocumentTypeDto } from './dtos/create-document-type.dto';
+import { CreateRHDto } from './dtos/create-rh.dto';
 
 interface ModelExt<T> extends Model<T> {
   delete: (id) => any;
@@ -16,21 +18,14 @@ interface ModelExt<T> extends Model<T> {
 
 @Injectable()
 export class UtilsService {
-  private readonly documentTypes: any[] = [];
-
   constructor(
     private readonly httpService: HttpService,
     @InjectModel(Role.name) private roleModel: ModelExt<Role>,
+    @InjectModel(RH.name) private rhModel: ModelExt<RH>,
     @InjectModel(Gender.name) private genderModel: ModelExt<Gender>,
-  ) {
-    // Tipos de documentos
-    this.documentTypes = [
-      { id: 'asd-133-asd', text: 'Cedula de ciudadania' },
-      { id: 'asd-133-asd', text: 'Cedula de Extranjeria' },
-      { id: 'asd-133-asd', text: 'Pasaporte' },
-      { id: 'asd-133-asd', text: 'Tarjeta de Identidad' },
-    ];
-  }
+    @InjectModel(DocumentType.name)
+    private documentTypeModel: ModelExt<DocumentType>,
+  ) {}
 
   getCountries() {
     return this.httpService
@@ -54,16 +49,57 @@ export class UtilsService {
       );
   }
 
-  getGenderList() {
-    return this.genderModel.find().exec();
+  async getGenderList() {
+    return await this.genderModel
+      .find()
+      .select({
+        __v: false,
+        _id: false,
+        deleted: false,
+      })
+      .exec();
   }
 
-  getDocumentTypes() {
-    return this.documentTypes;
+  async getDocumentTypes() {
+    return await this.documentTypeModel
+      .find()
+      .select({
+        __v: false,
+        _id: false,
+        deleted: false,
+      })
+      .exec();
   }
 
   async getRoles() {
-    return await this.roleModel.find().exec();
+    return await this.roleModel
+      .find()
+      .select({
+        __v: false,
+        _id: false,
+        deleted: false,
+      })
+      .exec();
+  }
+  async getRH() {
+    return await this.rhModel
+      .find()
+      .select({
+        __v: false,
+        _id: false,
+        deleted: false,
+      })
+      .exec();
+  }
+
+  async createDocumentType(body: CreateDocumentTypeDto) {
+    try {
+      const documentType = new this.documentTypeModel(body);
+      return await documentType.save();
+    } catch (e) {
+      console.error('Este es el error al crear el documentType => ', e);
+      throw new HttpException(e.message, HttpStatusCode.Conflict);
+    }
   }
 
   async createRole(body: CreateRoleDto) {
@@ -81,7 +117,17 @@ export class UtilsService {
       const gender = new this.genderModel(body);
       return await gender.save();
     } catch (e) {
-      console.error('Este es el error al crear el role => ', e);
+      console.error('Este es el error al crear el gender => ', e);
+      throw new HttpException(e.message, HttpStatusCode.Conflict);
+    }
+  }
+
+  async createRH(body: CreateRHDto) {
+    try {
+      const rh = new this.rhModel(body);
+      return await rh.save();
+    } catch (e) {
+      console.error('Este es el error al crear el gender => ', e);
       throw new HttpException(e.message, HttpStatusCode.Conflict);
     }
   }

@@ -3,6 +3,8 @@ import { ApiTags } from '@nestjs/swagger';
 import { UtilsService } from './utils.service';
 import { CreateRoleDto } from './dtos/create-role.dto';
 import { CreateGenderDto } from './dtos/create-gender.dto';
+import { CreateDocumentTypeDto } from './dtos/create-document-type.dto';
+import { CreateRHDto } from './dtos/create-rh.dto';
 
 @Controller('utils')
 @ApiTags('Utils')
@@ -27,6 +29,11 @@ export class UtilsController {
   getRoles() {
     return this.utilsService.getRoles();
   }
+
+  @Get('rh')
+  getRH() {
+    return this.utilsService.getRH();
+  }
   @Post('roles')
   createRole(@Body() body: CreateRoleDto) {
     return this.utilsService.createRole(body);
@@ -35,5 +42,15 @@ export class UtilsController {
   @Post('genders')
   createGender(@Body() body: CreateGenderDto) {
     return this.utilsService.createGender(body);
+  }
+
+  @Post('document-types')
+  createDocumentTypes(@Body() body: CreateDocumentTypeDto) {
+    return this.utilsService.createDocumentType(body);
+  }
+
+  @Post('rh')
+  createRH(@Body() body: CreateRHDto) {
+    return this.utilsService.createRH(body);
   }
 }

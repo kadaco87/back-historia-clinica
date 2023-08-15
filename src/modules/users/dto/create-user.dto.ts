@@ -76,5 +76,6 @@ export class CreateUserDto {
   contactInfo: ContactInfo;
   @ApiProperty()
   @IsString()
+  @IsNotEmpty()
   role: string;
 }
