@@ -9,6 +9,7 @@ import { HttpStatusCode } from 'axios';
 import { CreateGenderDto } from './dtos/create-gender.dto';
 import { CreateDocumentTypeDto } from './dtos/create-document-type.dto';
 import { CreateRHDto } from './dtos/create-rh.dto';
+import * as fs from 'fs';
 
 interface ModelExt<T> extends Model<T> {
   delete: (id) => any;
@@ -18,6 +19,15 @@ interface ModelExt<T> extends Model<T> {
 
 @Injectable()
 export class UtilsService {
+  diagnosticosPath = './public/diagnosticos.json';
+  medicamentosPath = './public/medicamentos.json';
+  urlMedicamentos = 'https://www.datos.gov.co/resource/xzwx-qpja.json';
+  listaMedicamentos: {
+    principioactivo: string;
+    concentracion: string;
+    formafarmaceutica: string;
+  }[];
+
   constructor(
     private readonly httpService: HttpService,
     @InjectModel(Role.name) private roleModel: ModelExt<Role>,
@@ -81,6 +91,7 @@ export class UtilsService {
       })
       .exec();
   }
+
   async getRH() {
     return await this.rhModel
       .find()
@@ -130,5 +141,15 @@ export class UtilsService {
       console.error('Este es el error al crear el gender => ', e);
       throw new HttpException(e.message, HttpStatusCode.Conflict);
     }
+  }
+
+  getDiagnosticos() {
+    const jsonData = fs.readFileSync(this.diagnosticosPath, 'utf8');
+    return JSON.parse(jsonData);
+  }
+
+  getMedicamentos() {
+    const jsonData = fs.readFileSync(this.medicamentosPath, 'utf8');
+    return JSON.parse(jsonData);
   }
 }

@@ -20,11 +20,6 @@ export class CreateNotaEnfermeriaDto {
   nota: string;
 
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  patientId: string;
-
-  @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
   date: number;

@@ -53,4 +53,14 @@ export class UtilsController {
   createRH(@Body() body: CreateRHDto) {
     return this.utilsService.createRH(body);
   }
+
+  @Get('diagnosticos')
+  getDiagnosticos() {
+    return this.utilsService.getDiagnosticos();
+  }
+
+  @Get('medicamentos')
+  getMedicamentos() {
+    return this.utilsService.getMedicamentos();
+  }
 }

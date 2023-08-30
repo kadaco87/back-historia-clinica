@@ -7,6 +7,7 @@ import { Model, Types } from 'mongoose';
 import { HttpStatusCode } from 'axios';
 import { compare } from 'bcrypt';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { ClinicHistoryService } from '../clinic-history/clinic-history.service';
 interface ModelExt<T> extends Model<T> {
   delete: (id) => any;
   findDeleted: () => any;
@@ -18,6 +19,7 @@ export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: ModelExt<User>,
     private readonly eventEmitter: EventEmitter2,
+    private readonly clinicHistory: ClinicHistoryService,
   ) {}
   async create(createUserDto: CreateUserDto) {
     try {
@@ -34,7 +36,7 @@ export class UsersService {
   async findAll(role: string) {
     if (!role) {
       return await this.userModel
-        .find({ role: { $ne: '87f0a3bb-5f5c-48d0-a5f8-c7eca83098c3' } })
+        .find()
         .select({
           __v: false,
           _id: false,
@@ -42,10 +44,11 @@ export class UsersService {
           'contactInfo.deleted': false,
           'fullName._id': false,
           'fullName.deleted': false,
+          password: false,
         })
         .exec();
     } else if (role && role !== '') {
-      return await this.userModel
+      const userList = await this.userModel
         .find({ role })
         .select({
           __v: false,
@@ -54,8 +57,31 @@ export class UsersService {
           'contactInfo.deleted': false,
           'fullName._id': false,
           'fullName.deleted': false,
+          password: false,
         })
         .exec();
+      const activeHistoriesDoc =
+        await this.clinicHistory.findAllActiveHistories();
+      if (activeHistoriesDoc && activeHistoriesDoc.length > 0) {
+        return userList.map((user) => {
+          const history = activeHistoriesDoc.find(
+            (history) => history.patientId === user.toObject().id,
+          );
+          if (history) {
+            return {
+              ...user.toObject(),
+              historyState: history.toObject().state,
+              historyId: history.toObject().historyId,
+            };
+          } else {
+            return {
+              ...user.toObject(),
+              historyState: false,
+              historyId: null,
+            };
+          }
+        });
+      }
     } else {
       return [];
     }

@@ -7,7 +7,7 @@
     "webpack": true,
     "tsConfigPath": "tsconfig.build.json",
     "deleteOutDir": true,
-    "assets": ["modules/mails/templates/**"],
+    "assets": ["modules/mails/templates/**", "public/**"],
     "watchAssets": true
   }
 }

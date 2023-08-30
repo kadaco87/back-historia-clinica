@@ -1,39 +1,50 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { ClinicHistoryService } from './clinic-history.service';
 import { CreateVitalSignsDto } from './dto/create-vital-signs.dto';
-import { UpdateClinicHistoryDto } from './dto/update-clinic-history.dto';
 import {
   CreateNotaAclaratoriaDto,
   CreateNotaEnfermeriaDto,
 } from './dto/create-nota-enfermeria.dto';
 import { CreateOrdenMedicaDto } from './dto/create-orden-medica.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('clinic-history')
+@ApiTags('Clinic History')
 export class ClinicHistoryController {
   constructor(private readonly clinicHistoryService: ClinicHistoryService) {}
 
-  @Post('vital-signs/:patientId')
+  @Post('historia-clinica/:historyId/:patientId')
+  createHistoriaClinica(
+    @Param('historyId') historyId: string,
+    @Param('patientId') patientId: string,
+  ) {
+    return this.clinicHistoryService.createHistoriaClinica({
+      historyId,
+      patientId,
+    });
+  }
+
+  @Post('vital-signs/:historyId/:patientId')
   createVitalSign(
+    @Param('historyId') historyId: string,
     @Param('patientId') patientId: string,
     @Body() createVitalSignDto: CreateVitalSignsDto,
   ) {
     return this.clinicHistoryService.createVitalSign(
+      historyId,
       patientId,
       createVitalSignDto,
     );
   }
 
-  @Get('vital-signs/:patientId')
-  findVitalSignsForPatientID(@Param('patientId') patientId: string) {
-    return this.clinicHistoryService.findVitalSignsForPatientId(patientId);
+  @Get('vital-signs/:historyId')
+  findVitalSignsForPatientID(@Param('historyId') historyId: string) {
+    return this.clinicHistoryService.findVitalSignsForPatientId(historyId);
+  }
+
+  @Get('ordenes-medicas/:historyId')
+  findMedicalOrdersForHistoryId(@Param('historyId') historyId: string) {
+    return this.clinicHistoryService.findMedicalOrdersForHistoryId(historyId);
   }
 
   @Post('notas-enfermeria/:notaId/notas-aclaratorias')
@@ -47,12 +58,14 @@ export class ClinicHistoryController {
     );
   }
 
-  @Post('notas-enfermeria/:patientId')
+  @Post('notas-enfermeria/:historyId/:patientId')
   createNotaEnfermeria(
+    @Param('historyId') historyId: string,
     @Param('patientId') patientId: string,
     @Body() createNotaEnfermeriaDto: CreateNotaEnfermeriaDto,
   ) {
     return this.clinicHistoryService.createNotaEnfemeria(
+      historyId,
       patientId,
       createNotaEnfermeriaDto,
     );
@@ -63,32 +76,29 @@ export class ClinicHistoryController {
     return this.clinicHistoryService.findNotasEnfermeriaForPatientId(patientId);
   }
 
-  @Post('ordenes-medicas/:patientId')
+  @Post('ordenes-medicas/:historyId/:patientId')
   createOrdenMedica(
+    @Param('historyId') historyId: string,
     @Param('patientId') patientId: string,
     @Body() createOrdenMedicaDto: CreateOrdenMedicaDto,
   ) {
     return this.clinicHistoryService.createOrdenMedica(
+      historyId,
       patientId,
       createOrdenMedicaDto,
     );
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.clinicHistoryService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateClinicHistoryDto: UpdateClinicHistoryDto,
+  @Post('atenciones-medicas/:historyId/:patientId')
+  createAtencionMedica(
+    @Param('historyId') historyId: string,
+    @Param('patientId') patientId: string,
+    @Body() body: any,
   ) {
-    return this.clinicHistoryService.update(+id, updateClinicHistoryDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.clinicHistoryService.remove(+id);
+    return this.clinicHistoryService.createAtencionMedicaModel(
+      historyId,
+      patientId,
+      body,
+    );
   }
 }
