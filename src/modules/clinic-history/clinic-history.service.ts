@@ -16,6 +16,8 @@ import {
 } from './dto/create-nota-enfermeria.dto';
 import { CreateOrdenMedicaDto } from './dto/create-orden-medica.dto';
 import { CreateHistoriaClinicaDto } from './dto/create-historia-clinica.dto';
+import { CreateAntecedentesClinicos } from './dto/create-antecentes-clinicos.dto';
+import { AntecedentesClinico } from './schemas/antecedentes-cinicos.schema';
 
 interface ModelExt<T> extends Model<T> {
   delete: (id) => any;
@@ -35,6 +37,8 @@ export class ClinicHistoryService {
     private ordenMedicaModel: ModelExt<OrdenMedica>,
     @InjectModel(AtencionMedica.name)
     private atencionMedicaModel: ModelExt<AtencionMedica>,
+    @InjectModel(AntecedentesClinico.name)
+    private antecedentesClinicoModel: ModelExt<AntecedentesClinico>,
   ) {}
   async createVitalSign(
     historyId: string,
@@ -188,7 +192,7 @@ export class ClinicHistoryService {
   async createAtencionMedicaModel(
     historyId: string,
     patientId: string,
-    body: CreateHistoriaClinicaDto,
+    body: any,
   ) {
     try {
       const atencionMedica = new this.atencionMedicaModel({
@@ -201,5 +205,88 @@ export class ClinicHistoryService {
       console.error('Este es el error al crear el Atencion Medica => ', e);
       throw new HttpException(e.message, HttpStatusCode.Conflict);
     }
+  }
+
+  async createAntecedentesClinicos(
+    historyId: string,
+    patientId: string,
+    body: CreateAntecedentesClinicos,
+  ) {
+    try {
+      const antecedentesClinico = new this.antecedentesClinicoModel({
+        historyId,
+        patientId,
+        ...body,
+      });
+      return !!(await antecedentesClinico.save());
+    } catch (e) {
+      console.error(
+        'Este es el error al crear los antecedentes clinicos => ',
+        e,
+      );
+      throw new HttpException(e.message, HttpStatusCode.Conflict);
+    }
+  }
+
+  async findAllHistoriasClinicasForPatientID(patientId: string) {
+    return this.historiaClinicaModel.aggregate([
+      {
+        $match: { patientId }, // Filtramos por el patientId
+      },
+      {
+        $lookup: {
+          from: 'users', // Nombre de la colección a unir
+          localField: 'patientId', // Campo local para la unión
+          foreignField: 'id', // Campo en la colección externa para la unión
+          as: 'user', // Nombre del nuevo arreglo que contendrá los datos de signosVitales
+        },
+      },
+      {
+        $unwind: '$user', // Desenrollamos el arreglo de signosVitales
+      },
+      {
+        $lookup: {
+          from: 'atencionmedicas', // Nombre de la colección a unir
+          localField: 'patientId', // Campo local para la unión
+          foreignField: 'patientId', // Campo en la colección externa para la unión
+          as: 'atencionmedica', // Nombre del nuevo arreglo que contendrá los datos de signosVitales
+        },
+      },
+      {
+        $unwind: '$atencionmedica', // Desenrollamos el arreglo de signosVitales
+      },
+      {
+        $group: {
+          _id: '$patientId', // Agrupamos por historyId
+          historiaClinica: { $first: '$$ROOT' }, // Obtenemos el primer documento de historiaClinica para cada grupo
+          user: { $push: '$users' }, // Creamos un arreglo con los datos de signosVitales
+          atencionMedica: { $push: '$atencionmedica' }, // Creamos un arreglo con los datos de signosVitales
+        },
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: ['$historiaClinica'],
+          },
+        },
+      },
+      {
+        $project: {
+          __v: false,
+          _id: false,
+          deleted: false,
+        },
+      },
+    ]);
+  }
+
+  async cerrarHistoriaClinica(historyId: Partial<CreateHistoriaClinicaDto>) {
+    const success = await this.historiaClinicaModel.findOneAndUpdate(
+      historyId,
+      {
+        state: false,
+      },
+    );
+    return !!success;
   }
 }

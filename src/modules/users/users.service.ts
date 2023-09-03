@@ -36,7 +36,9 @@ export class UsersService {
   async findAll(role: string) {
     if (!role) {
       return await this.userModel
-        .find()
+        .find({
+          role: { $not: { $eq: '87f0a3bb-5f5c-48d0-a5f8-c7eca83098c3' } },
+        })
         .select({
           __v: false,
           _id: false,

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch } from '@nestjs/common';
 import { ClinicHistoryService } from './clinic-history.service';
 import { CreateVitalSignsDto } from './dto/create-vital-signs.dto';
 import {
@@ -7,12 +7,24 @@ import {
 } from './dto/create-nota-enfermeria.dto';
 import { CreateOrdenMedicaDto } from './dto/create-orden-medica.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { CreateAntecedentesClinicos } from './dto/create-antecentes-clinicos.dto';
+import { CreateHistoriaClinicaDto } from './dto/create-historia-clinica.dto';
 
 @Controller('clinic-history')
 @ApiTags('Clinic History')
 export class ClinicHistoryController {
   constructor(private readonly clinicHistoryService: ClinicHistoryService) {}
 
+  @Get(':patientId')
+  findAllHistoriasClinicasForPatientID(@Param('patientId') patientId: string) {
+    return this.clinicHistoryService.findAllHistoriasClinicasForPatientID(
+      patientId,
+    );
+  }
+  @Patch()
+  cerrarHistoriaClinica(@Body() historyId: Partial<CreateHistoriaClinicaDto>) {
+    return this.clinicHistoryService.cerrarHistoriaClinica(historyId);
+  }
   @Post('historia-clinica/:historyId/:patientId')
   createHistoriaClinica(
     @Param('historyId') historyId: string,
@@ -96,6 +108,19 @@ export class ClinicHistoryController {
     @Body() body: any,
   ) {
     return this.clinicHistoryService.createAtencionMedicaModel(
+      historyId,
+      patientId,
+      body,
+    );
+  }
+
+  @Post('antecedentes-clinicos/:historyId/:patientId')
+  createAntecedentesClinicos(
+    @Param('historyId') historyId: string,
+    @Param('patientId') patientId: string,
+    @Body() body: CreateAntecedentesClinicos,
+  ) {
+    this.clinicHistoryService.createAntecedentesClinicos(
       historyId,
       patientId,
       body,

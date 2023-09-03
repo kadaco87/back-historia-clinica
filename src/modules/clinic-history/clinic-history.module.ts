@@ -14,6 +14,10 @@ import {
   VitalSignsSchema,
 } from './schemas/clinic-history.schema';
 import { MongooseModule } from '@nestjs/mongoose';
+import {
+  AntecedentesClinico,
+  AntecedentesClinicoSchema,
+} from './schemas/antecedentes-cinicos.schema';
 
 @Module({
   imports: [
@@ -23,6 +27,7 @@ import { MongooseModule } from '@nestjs/mongoose';
       { name: NotasEnfemeria.name, schema: NotasEnfemeriaSchema },
       { name: OrdenMedica.name, schema: OrdenMedicaSchema },
       { name: AtencionMedica.name, schema: AtencionMedicaSchema },
+      { name: AntecedentesClinico.name, schema: AntecedentesClinicoSchema },
     ]),
   ],
   controllers: [ClinicHistoryController],
